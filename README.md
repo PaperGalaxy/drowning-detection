@@ -1,2 +1,63 @@
-# drowning-detection
-Here's a shortened version:  Standard camera captures upper-body posture. Classifies normal/swimming/drowning/review via torso angle &amp; arm motion. Auto-triggers ejection when drowning confidence ≥0.98 in water mode. Supports manual water toggle, simulation, and event logs.
+## 项目说明
+澜盾智援 · 水域防溺水预警系统
+
+简介：
+本系统通过普通摄像头实时捕捉人体上半身姿态，根据躯干倾斜角度和手臂运动规律性判断人员状态（正常/游泳/溺水/复核）。当处于水域环境且溺水置信度 ≥0.98 时，自动触发弹射指令并记录溺水事件。支持手动水域开关、模拟测试、事件日志等。
+
+主要功能：
+- 实时人体姿态识别（MediaPipe Pose，仅依赖上半身）
+- 状态分类：正常(绿)、游泳/监控(橙)、溺水报警(红)、复核(紫)
+- 手动水域开关：避免非水域误报
+- 溺水计数与弹射指令模拟（含距离、气压、报警上报）
+- 事件日志（带时间戳）
+- 手动模拟溺水/正常按钮（无需摄像头）
+- 低功耗优化（限制分辨率、降低模型复杂度、跳帧处理）
+
+运行要求：
+- 操作系统：Windows / macOS / Linux
+- 浏览器：Chrome / Edge / Firefox（需支持 WebRTC 和 WebGL）
+- 网络：首次加载需联网获取 MediaPipe 模型
+- 摄像头：任意 USB 或内置摄像头
+
+重要：必须通过 HTTP/HTTPS 访问（不能直接双击 HTML 文件）。推荐使用本地服务器。
+
+部署方式：
+
+1. 本地 HTTP 服务器（最简单）
+   - 安装 Python（勾选“Add Python to PATH”）
+   - 在项目文件夹打开终端，执行：python -m http.server 8080
+   - 浏览器访问 http://localhost:8080，允许摄像头权限
+
+2. Windows 批处理脚本（保存为 run.bat，与 index.html 同目录）：
+   @echo off
+   start /b python -m http.server 8080
+   timeout /t 2 >nul
+   start http://localhost:8080
+   pause
+   taskkill /f /im python.exe
+
+3. GitHub Pages：上传 index.html 到仓库，开启 Pages 服务
+
+使用说明：
+1. 启动系统后自动请求摄像头权限
+2. 默认水域开关为“关闭”，点击顶部蓝色按钮开启（报警才生效）
+3. 站在摄像头前测试不同姿态：
+   - 正常站立 → 正常
+   - 规律摆臂 → 游泳监控
+   - 身体水平倾斜 → 溺水报警（自动触发弹射指令）
+4. 也可点击“模拟溺水事件”按钮测试报警逻辑（无需摄像头）
+5. 右侧面板显示溺水总数、最后弹射指令，下方事件记录区显示详细日志
+
+常见问题：
+- 摄像头被占用：关闭其他使用摄像头的软件（微信、Zoom、OBS），刷新页面重新允许权限。
+- 检测不准：保证光线充足，上半身在画面内，可调整代码中的姿态阈值。
+- GPU占用高：已做优化，若仍高可进一步降低摄像头分辨率或增大跳帧数。
+- 直接双击 HTML 无法使用摄像头：这是浏览器安全策略，必须通过 localhost 或 https 访问。
+
+扩展硬件对接：
+在 index.html 中找到 simulateLaunch 函数，替换其中的内容为 WebSocket/串口/HTTP 请求，即可连接真实救生圈弹射装置、声光报警器、无人机等。
+
+文件结构：
+- index.html ：主程序（样式、逻辑、MediaPipe）
+- README.txt ：本说明文件
+- run.bat ：（可选）Windows 快速启动脚本
