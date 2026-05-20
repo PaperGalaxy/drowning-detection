@@ -61,3 +61,68 @@
 - index.html ：主程序（样式、逻辑、MediaPipe）
 - README.txt ：本说明文件
 - run.bat ：（可选）Windows 快速启动脚本
+
+**Landun Rescue · Aquatic Anti-Drowning Early Warning System**
+
+**Introduction:**  
+This system uses a standard camera to capture upper body posture in real time, and judges personnel status (normal/swimming/drowning/review) based on torso tilt angle and arm movement patterns. When in an aquatic environment with a drowning confidence level ≥0.98, the ejection command is automatically triggered and the drowning incident is recorded. Supports manual water area switching, simulation testing, event logs, etc.
+
+**Main Features:**
+- Real‑time human pose estimation (MediaPipe Pose, upper body only)
+- Status classification: normal (green), swimming/monitoring (orange), drowning alarm (red), review (purple)
+- Manual water area switch: avoids false alarms outside water
+- Drowning count and ejection command simulation (including distance, air pressure, alarm reporting)
+- Event log (with timestamps)
+- Manual drowning/normal simulation button (no camera required)
+- Low‑power optimization (resolution limit, reduced model complexity, frame skipping)
+
+**System Requirements:**
+- OS: Windows / macOS / Linux
+- Browser: Chrome / Edge / Firefox (WebRTC and WebGL support required)
+- Network: internet connection needed for first‑time MediaPipe model loading
+- Camera: any USB or built‑in camera
+
+**Important:** Must be accessed via HTTP/HTTPS (double‑clicking the HTML file will **not** work). A local web server is recommended.
+
+**Deployment Methods:**
+
+1. **Local HTTP server (easiest)**  
+   - Install Python (check “Add Python to PATH”)  
+   - Open a terminal in the project folder and run: `python -m http.server 8080`  
+   - Open browser to `http://localhost:8080` and allow camera permission
+
+2. **Windows batch script** (save as `run.bat` in the same folder as `index.html`):  
+   ```
+   @echo off
+   start /b python -m http.server 8080
+   timeout /t 2 >nul
+   start http://localhost:8080
+   pause
+   taskkill /f /im python.exe
+   ```
+
+3. **GitHub Pages** – upload `index.html` to a repository and enable Pages.
+
+**Usage Instructions:**
+- The system will request camera permission on startup.  
+- The water area switch is **off** by default. Click the top blue button to turn it on (alarm works only when water mode is active).  
+- Stand in front of the camera and try different postures:  
+  - Standing normally → normal  
+  - Regular arm swinging → swimming/monitoring  
+  - Horizontal body tilt → drowning alarm (ejection command automatically triggered)  
+- You can also click the “Simulate Drowning” button to test the alarm logic (no camera needed).  
+- The right panel shows total drowning events and the last ejection command. The lower event log area displays detailed logs.
+
+**Troubleshooting:**
+- **Camera busy:** Close other camera‑using software (WeChat, Zoom, OBS) and refresh the page to re‑grant permission.  
+- **Inaccurate detection:** Ensure good lighting and that the upper body is fully visible. Adjust posture thresholds in the code if necessary.  
+- **High GPU usage:** Already optimised. If still high, further reduce camera resolution or increase frame skipping.  
+- **Double‑clicking the HTML file doesn't work:** This is a browser security policy. You must access via `localhost` or HTTPS.
+
+**Hardware Integration:**  
+Locate the `simulateLaunch` function in `index.html` and replace its content with WebSocket, serial, or HTTP requests to connect to actual lifebuoy launcher, audible/visual alarm, drone, etc.
+
+**File Structure:**
+- `index.html` – main program (styles, logic, MediaPipe)  
+- `README.txt` – this documentation  
+- `run.bat` – (optional) Windows quick start script
