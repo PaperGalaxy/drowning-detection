@@ -228,7 +228,7 @@
                         <div><span style="background:#22c55e;"></span>正常</div>
                         <div><span style="background:#f97316;"></span>游泳/监控</div>
                         <div><span style="background:#ef4444;"></span>溺水报警</div>
-                        <div><span style="background:#a855f7;"></span>复核</div>
+                        <div><span style="background:#a855f7;"></span>复核(中置信)</div>
                     </div>
                     <button id="manualLaunchBtn" class="secondary" style="margin-right:8px;">手动弹射救生圈</button>
                     <button id="clearEventsBtn" class="secondary">清除事件记录</button>
@@ -249,7 +249,15 @@
                 </div>
             </div>
 
+            <!-- 手动模拟溺水面板 -->
+            <div class="demo-panel">
+                <div style="font-weight:500; margin-bottom:8px;">🧪 手动模拟测试（无需摄像头）</div>
+                <button id="simulateDrowningBtn" style="background:#b91c1c;">模拟溺水事件</button>
+                <button id="simulateNormalBtn" class="secondary">模拟正常状态</button>
+                <span style="margin-left:12px; font-size:0.7rem;">点击可触发报警/弹射，测试水域开关效果</span>
+            </div>
         </div>
+        <div class="footer">基于上半身姿态+不规则挣扎 | 水域环境需手动开启（避免误报） | 置信度≥0.98自动弹射</div>
     </div>
 
     <script>
@@ -400,7 +408,7 @@
             if (state === 0) { color = '#22c55e'; label = '正常'; }
             else if (state === 1) { color = '#f97316'; label = '游泳监控'; }
             else { color = '#ef4444'; label = '溺水'; }
-            if (confidence >= 0.85 && confidence < 0.98 && state === 2) { color = '#a855f7'; label = '复核'; }
+            if (confidence >= 0.85 && confidence < 0.98 && state === 2) { color = '#a855f7'; label = '复核(中置信)'; }
             let minX = 1, minY = 1, maxX = 0, maxY = 0;
             for (let p of landmarks) if (p.visibility > 0.5) {
                 minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
