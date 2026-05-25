@@ -378,7 +378,7 @@
         }
         function simulateLaunch(reason) {
             const time = new Date().toLocaleTimeString();
-            const launchMsg = `${reason} | 多级弹道 10/50/100m | 气压 2.4bar | 救生圈弹出 | 上报平台`;
+            const launchMsg = `${reason} | 多级弹道 | 救生圈弹出 | 上报平台`;
             lastLaunchSpan.innerText = launchMsg.substring(0, 60);
             addEvent(`🚨 弹射指令: ${launchMsg}`);
         }
